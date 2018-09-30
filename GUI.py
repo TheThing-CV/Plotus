@@ -1,4 +1,5 @@
-﻿from tkinter import *
+﻿# importing libraries
+from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 import pandas as pd
@@ -10,15 +11,13 @@ from scipy.stats.mstats import normaltest
 from scipy.stats import f
 from numpy import mean
 import missingno
-
+import statsmodels.api as sm
+from statsmodels.formula.api import ols
 
 sns.set_style('white')  # white, whitegrid, dark, darkgrid
 sns.set_context('notebook')
 
-import statsmodels.api as sm
-from statsmodels.formula.api import ols
-
-
+# creating directories if needed
 if os.path.exists('Plots'):
     pass
 else:
@@ -30,6 +29,7 @@ else:
     os.makedirs('Analysis/')
 
 
+# main function for data analysis
 def analyze_us():
     global data
     if data is None:
@@ -46,10 +46,12 @@ def analyze_us():
         anova_analysis()
 
 
+# print status of the program
 def print_status(text, color):
     message.config(text=text, foreground=color)
 
 
+# descriptive analysis
 def describe():
     global data
 
@@ -99,11 +101,11 @@ def describe():
                 group_data.to_excel(writer, sheet_name='Sheet1', startcol=col_number, startrow=row_number)
                 col_number += 4
 
-
-
     writer.save()
     os.startfile('Analysis\descriptive statistics.xlsx')
 
+
+# checking for normality
 def normality():
     data_dropped_na = data.dropna()
     column_name = "D’Agostino and Pearson’s Normality Test"
@@ -137,7 +139,6 @@ def normality():
             index_list.append(x)
         else:
             for i in set(data_dropped_na[y]):
-
                 test, p_value = normaltest(data_dropped_na[data_dropped_na[y] == i][x])
 
                 test_list.append(test)
@@ -152,8 +153,9 @@ def normality():
     print_status('Status: Normality test performed', 'black')
     os.startfile('Analysis\\Normality.xlsx')
 
-def homogeneity():
 
+# checking for homogeneity
+def homogeneity():
     data_dropped_na = data.dropna()
 
     formula = var_formula.get()
@@ -202,8 +204,7 @@ def homogeneity():
     os.startfile('Analysis\Homogeneity.xlsx')
 
 
-
-
+# custom Levine test
 def our_levene(lists):
     dev_from_group_mean = []
     group_dev_mean = []
@@ -218,14 +219,14 @@ def our_levene(lists):
     sums_of_dev_from_grand_mean = []
 
     for i in dev_from_group_mean:
-        dev_from_grand_mean.append((i - grand_mean)**2)
-        sums_of_dev_from_grand_mean.append(((i - grand_mean)**2).sum())
+        dev_from_grand_mean.append((i - grand_mean) ** 2)
+        sums_of_dev_from_grand_mean.append(((i - grand_mean) ** 2).sum())
 
     sum_of_dev_from_grand_mean = sum(sums_of_dev_from_grand_mean)
 
     effect = 0
     for i in range(len(group_size)):
-        effect += (group_dev_mean[i] - grand_mean)**2 * group_size[i]
+        effect += (group_dev_mean[i] - grand_mean) ** 2 * group_size[i]
 
     error = sum_of_dev_from_grand_mean - effect
 
@@ -235,27 +236,27 @@ def our_levene(lists):
     mean_square_effect = effect / df_effect
     mean_square_error = error / df_error
 
-    F_effect = mean_square_effect / mean_square_error
+    f_effect = mean_square_effect / mean_square_error
 
-    p_value = f.sf(F_effect, df_effect, df_error)
+    p_value = f.sf(f_effect, df_effect, df_error)
 
-    return F_effect, p_value
+    return f_effect, p_value
 
 
-
+# analysis of variance
 def anova_analysis():
     data_dropped_na = data.dropna()
 
-    mc1 = multi.MultiComparison(data_dropped_na[var_formula.get().split('~')[0]], data_dropped_na[var_formula.get().split('~')[1]])
+    mc1 = multi.MultiComparison(data_dropped_na[var_formula.get().split('~')[0]],
+                                data_dropped_na[var_formula.get().split('~')[1]])
     result = mc1.tukeyhsd()
     t = result.summary().as_text()
     a_list = t.split('\n')
     cols = [col for col in a_list[2].split(' ') if col]
     df = pd.DataFrame(columns=cols)
     for i in range(4, len(a_list) - 1):
-
         items = [item for item in a_list[i].split(' ') if item]
-        df.loc[i-4] = items
+        df.loc[i - 4] = items
 
     formula = var_formula.get()
     mod = ols(formula, data=data_dropped_na).fit()
@@ -271,11 +272,12 @@ def anova_analysis():
     os.startfile('Analysis\ANOVA.xlsx')
 
 
+# load data from disk
 def load():
     global data
-    file = filedialog.askopenfile(parent=root, mode='rb', title='Choose your file', filetypes=(("Excel files and .csv", "*.xlsx;*.xls;*.csv")
-                                                                                                                  ,("All files", "*.*")))
-
+    file = filedialog.askopenfile(parent=root, mode='rb', title='Choose your file',
+                                  filetypes=(("Excel files and .csv", "*.xlsx;*.xls;*.csv")
+                                             , ("All files", "*.*")))
 
     if file is not None:
 
@@ -294,14 +296,16 @@ def load():
         values_list = ['None'] + data.columns.tolist()
         combo_by.config(values=values_list)
         combo_by.set(values_list[0])
-        types_list = ['Histogram', 'Scatter plot', 'Bar plot', 'Count bar', 'Boxplot', 'Violin plot', 'Beeswarm plot', 'Missing data with matrix', 'Missing data with bars', 'Missing data correlations']
+        types_list = ['Histogram', 'Scatter plot', 'Bar plot', 'Count bar', 'Boxplot', 'Violin plot', 'Beeswarm plot',
+                      'Missing data with matrix', 'Missing data with bars', 'Missing data correlations']
         type_combo.config(values=types_list)
         type_combo.set(types_list[0])
-        analysis_types = ['None', 'Descriptive stats', 'Normality test', 'Levene\'s equality of variance', 'ANOVA one-way']
+        analysis_types = ['None', 'Descriptive stats', 'Normality test', 'Levene\'s equality of variance',
+                          'ANOVA one-way']
         combo_analysis.config(values=analysis_types)
         combo_analysis.set(analysis_types[0])
-        palettes = ['Blues', 'coolwarm', 'GnBu_d',  'pastel', 'Set1',
-                    'summer', 'muted', 'Spectral', 'husl',  'copper', 'magma']
+        palettes = ['Blues', 'coolwarm', 'GnBu_d', 'pastel', 'Set1',
+                    'summer', 'muted', 'Spectral', 'husl', 'copper', 'magma']
         combo_palette.config(values=palettes)
         combo_palette.set(palettes[0])
 
@@ -310,8 +314,8 @@ def load():
             listbox.insert('end', item)
 
 
+# core plotting procedures
 def plot_us():
-
     fig, ax = plt.subplots(1, 1)
     by = combo_by.get()
     if by == 'None':
@@ -321,12 +325,11 @@ def plot_us():
 
     plot_type = type_combo.get()
 
-
     if plot_type == 'Histogram':
 
-        g = sns.distplot(data_dropped_na[combo_x.get()],  rug=True,  rug_kws={'color': '#777777', 'alpha': 0.2},
-                              hist_kws={'edgecolor': 'black', 'color': '#6899e8', 'label': 'розподіл'},
-                              kde_kws={'color': 'black', 'alpha': 0.2, 'label': 'ядрова оцінка густини'})
+        g = sns.distplot(data_dropped_na[combo_x.get()], rug=True, rug_kws={'color': '#777777', 'alpha': 0.2},
+                         hist_kws={'edgecolor': 'black', 'color': '#6899e8', 'label': 'розподіл'},
+                         kde_kws={'color': 'black', 'alpha': 0.2, 'label': 'ядрова оцінка густини'})
         sns.despine(left=True, bottom=True)  # видалити осі повністю
         g.set_xlabel(combo_x.get(), color='black', fontsize=15, alpha=0.5)
         g.set_ylabel('Густина', color='black', fontsize=15, alpha=0.5)
@@ -381,7 +384,8 @@ def plot_us():
 
     if plot_type == 'Boxplot':
 
-        ax = sns.boxplot(combo_x.get(), combo_y.get(), data=data_dropped_na, hue=by, width=0.4, palette=combo_palette.get())
+        ax = sns.boxplot(combo_x.get(), combo_y.get(), data=data_dropped_na, hue=by, width=0.4,
+                         palette=combo_palette.get())
         ax.set_ylabel(combo_y.get(), color='#666666')
         ax.set_xlabel(combo_x.get(), color='#666666')
         if by is not None:
@@ -394,7 +398,8 @@ def plot_us():
 
     if plot_type == 'Violin plot':
 
-        ax = sns.violinplot(combo_x.get(), combo_y.get(), data=data_dropped_na, hue=by, scale='count', split=True, palette=combo_palette.get())
+        ax = sns.violinplot(combo_x.get(), combo_y.get(), data=data_dropped_na, hue=by, scale='count', split=True,
+                            palette=combo_palette.get())
         ax.set_ylabel(combo_y.get(), color='#666666')
         ax.set_xlabel(combo_x.get(), color='#666666')
         if by is not None:
@@ -406,7 +411,8 @@ def plot_us():
         return
 
     if plot_type == 'Beeswarm plot':
-        ax = sns.swarmplot(combo_x.get(), combo_y.get(), data=data_dropped_na, hue=by, alpha=0.7, palette=combo_palette.get())
+        ax = sns.swarmplot(combo_x.get(), combo_y.get(), data=data_dropped_na, hue=by, alpha=0.7,
+                           palette=combo_palette.get())
 
         mean_width = .5
 
@@ -454,7 +460,6 @@ def plot_us():
         return
 
     if plot_type == 'Missing data correlations':
-
         ax = missingno.heatmap(data, inline=False, figsize=(25, 25))
 
         plt.savefig('Plots/missing correlations.pdf')
@@ -463,11 +468,33 @@ def plot_us():
         return
 
 
+def on_select(evt):
+    w = evt.widget
+    index = int(w.curselection()[0])
+    value = w.get(index)
+    var_formula.set(var_formula.get() + value)
+    formula_analysis.delete(0, END)
+    formula_analysis.insert(0, var_formula.get())
+
+
+def add_plus():
+    var_formula.set(var_formula.get() + '+')
+    formula_analysis.delete(0, END)
+    formula_analysis.insert(0, var_formula.get())
+
+
+def add_tilda():
+    var_formula.set(var_formula.get() + '~')
+    formula_analysis.delete(0, END)
+    formula_analysis.insert(0, var_formula.get())
+
+
+# main GUI setup
 fig, ax = plt.subplots(1, 1)
 data = None
 
 root = Tk()
-root.resizable(0,0)
+root.resizable(0, 0)
 
 root.wm_title("Plotus")
 ttk.Button(root, text="Load data", command=load, width=40).grid(row=0, column=0, columnspan=3, pady=5, padx=5)
@@ -477,18 +504,15 @@ ttk.Label(root, text='Choose plot type: ').grid(row=1, column=0, sticky='W', pad
 type_combo = ttk.Combobox(root, textvariable=type_value)
 type_combo.grid(row=1, column=1, padx=7)
 
-
 ttk.Label(root, text='Choose x-axis: ').grid(row=2, column=0, sticky='W', padx=7)
 var_x = StringVar()
 combo_x = ttk.Combobox(root, textvariable=var_x)
 combo_x.grid(row=2, column=1, padx=7)
 
-
 var_y = StringVar()
 ttk.Label(root, text='Choose y-axis: ').grid(row=3, column=0, sticky='W', padx=7)
 combo_y = ttk.Combobox(root, textvariable=var_y)
 combo_y.grid(row=3, column=1, padx=7)
-
 
 var_by = StringVar()
 ttk.Label(root, text='Choose \'by\' factor: ').grid(row=4, column=0, sticky='W', padx=7)
@@ -506,25 +530,11 @@ listbox = Listbox(root, width=15, height=5)
 
 listbox.grid(row=7, column=0, rowspan=3, padx=5, pady=5)
 # create a vertical scrollbar to the right of the listbox
-yscroll = Scrollbar(root, command=listbox.yview, orient=VERTICAL)
-yscroll.grid(row=7, column=0, rowspan=3, sticky='nse')
-listbox.configure(yscrollcommand=yscroll.set)
-
-
-def on_select(evt):
-    w = evt.widget
-    index = int(w.curselection()[0])
-    value = w.get(index)
-    var_formula.set(var_formula.get() + value)
+y_scroll = Scrollbar(root, command=listbox.yview, orient=VERTICAL)
+y_scroll.grid(row=7, column=0, rowspan=3, sticky='nse')
+listbox.configure(yscrollcommand=y_scroll.set)
 
 listbox.bind('<<ListboxSelect>>', on_select)
-
-
-def add_plus():
-    var_formula.set(var_formula.get() + '+')
-
-def add_tilda():
-    var_formula.set(var_formula.get() + '~')
 
 ttk.Button(root, text='+', command=add_plus, width=6).grid(row=10, column=0, padx=8, pady=5, columnspan=1, sticky='W')
 ttk.Button(root, text='~', command=add_tilda, width=6).grid(row=10, column=0, padx=22, pady=5, columnspan=1, sticky='E')
@@ -546,12 +556,10 @@ formula_analysis.grid(row=10, column=1, padx=7)
 analyze_button = ttk.Button(root, text='Analyze', command=analyze_us, width=40)
 analyze_button.grid(row=11, column=0, columnspan=3, padx=5, pady=5)
 
-
 message = ttk.Label(root, text='Status: Ready')
 message.grid(row=12, column=0, columnspan=2, pady=2)
 message.config(font=('default', 7))
 
-
-
-
-root.mainloop()
+# run module
+if __name__ == '__main__':
+    root.mainloop()
