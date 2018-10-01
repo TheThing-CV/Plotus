@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import statsmodels.stats.multicomp as multi
 from scipy.stats.mstats import normaltest
-from scipy.stats import f
+from scipy.stats import f, stats
 from numpy import mean
 import missingno
 import statsmodels.api as sm
@@ -296,8 +296,9 @@ def load():
         values_list = ['None'] + data.columns.tolist()
         combo_by.config(values=values_list)
         combo_by.set(values_list[0])
-        types_list = ['Histogram', 'Scatter plot', 'Bar plot', 'Count bar', 'Boxplot', 'Violin plot', 'Beeswarm plot',
-                      'Missing data with matrix', 'Missing data with bars', 'Missing data correlations']
+        types_list = ['Histogram', 'Pair plot', 'Scatter plot', 'Bar plot', 'Count bar', 'Box plot', 'Violin plot',
+                      'Beeswarm plot', 'Correlation matrix', 'Cluster plot', 'Missing data with matrix',
+                      'Missing data with bars', 'Missing data correlations']
         type_combo.config(values=types_list)
         type_combo.set(types_list[0])
         analysis_types = ['None', 'Descriptive stats', 'Normality test', 'Levene\'s equality of variance',
@@ -316,7 +317,7 @@ def load():
 
 # core plotting procedures
 def plot_us():
-    fig, ax = plt.subplots(1, 1)
+    fig, ax = plt.subplots(1, 1, figsize=(10, 6))
     by = combo_by.get()
     if by == 'None':
         by = None
@@ -341,15 +342,24 @@ def plot_us():
         os.startfile('Plots\hist.pdf')
         return
 
+    if plot_type == 'Pair plot':
+        sns_plot = sns.pairplot(data_dropped_na, hue=by, palette=combo_palette.get())
+
+        sns_plot.savefig('Plots/pairplot.pdf')
+        plt.close(fig)
+        os.startfile('Plots\pairplot.pdf')
+        return
+
     if plot_type == 'Scatter plot':
         a = sns.jointplot(combo_x.get(), combo_y.get(), data=data_dropped_na, kind='reg', color='#5394d6',
-                          annot_kws={'fontsize': 14, 'loc': [-0.1, 0.85]},
+
                           marginal_kws={'rug': True, 'bins': 25, 'hist_kws': {'edgecolor': 'black'}},
                           joint_kws={'scatter_kws': {'alpha': 0.7}})
         plt.setp(a.ax_marg_x.patches, linewidth=1.0, color='#a9c8e8')
         plt.setp(a.ax_marg_y.patches, linewidth=1.0, color='#a9c8e8')
         a.ax_joint.set_xlabel(combo_x.get(), fontsize=15, alpha=0.7)
         a.ax_joint.set_ylabel(combo_y.get(), fontsize=15, alpha=0.7)
+        a.annotate(stats.pearsonr)
         plt.savefig('Plots/scatter.pdf')
         plt.close()
         os.startfile('Plots\scatter.pdf')
@@ -382,7 +392,7 @@ def plot_us():
         os.startfile('Plots\\countbar.pdf')
         return
 
-    if plot_type == 'Boxplot':
+    if plot_type == 'Box plot':
 
         ax = sns.boxplot(combo_x.get(), combo_y.get(), data=data_dropped_na, hue=by, width=0.4,
                          palette=combo_palette.get())
@@ -429,6 +439,23 @@ def plot_us():
         plt.savefig('Plots/beeswarm.pdf')
         plt.close(fig)
         os.startfile('Plots\\beeswarm.pdf')
+        return
+
+    if plot_type == 'Correlation matrix':
+        corr = data_dropped_na.corr()
+        colormap = sns.diverging_palette(220, 10, as_cmap=True)
+
+        sns.heatmap(corr, cmap=colormap, annot=True, fmt=".2f", linewidths=0.5)
+        plt.savefig('Plots/correlation_m.pdf')
+        plt.close(fig)
+        os.startfile('Plots\\correlation_m.pdf')
+        return
+
+    if plot_type == 'Cluster plot':
+        sns.clustermap(data_dropped_na.corr(), metric="correlation", method="single", cmap='vlag', linewidths=0.5)
+        plt.savefig('Plots/cluster_plot.pdf')
+        plt.close(fig)
+        os.startfile('Plots\\cluster_plot.pdf')
         return
 
     if plot_type == 'Missing data with matrix':
