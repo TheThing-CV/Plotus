@@ -245,7 +245,13 @@ def our_levene(lists):
 
 # analysis of variance
 def anova_analysis():
+    if var_formula.get() == '':
+        print_status("Warning: Formula is missing", 'red')
+        return
+
     data_dropped_na = data.dropna()
+    continuous_columns = [col for col in data_dropped_na.columns if data_dropped_na[col].dtype != 'object']
+
     col = 1
     writer = pd.ExcelWriter('Analysis/ANOVA.xlsx')
 
@@ -276,6 +282,7 @@ def anova_analysis():
         writer.save()
 
     os.startfile('Analysis\ANOVA.xlsx')
+    print_status('Status: Successful analysis', 'black')
 
 
 # load data from disk
@@ -321,9 +328,10 @@ def load():
             listbox.insert('end', item)
 
 
+
 # core plotting procedures
 def plot_us():
-    fig, ax = plt.subplots(1, 1, figsize=(10, 6))
+    fig, ax = plt.subplots(1, 1, figsize=(22, 12))
     by = combo_by.get()
     if by == 'None':
         by = None
@@ -452,14 +460,15 @@ def plot_us():
         colormap = sns.diverging_palette(220, 10, as_cmap=True)
 
         sns.heatmap(corr, cmap=colormap, annot=True, fmt=".2f", linewidths=0.5)
-        plt.savefig('Plots/correlation_m.pdf')
+        plt.savefig('Plots/correlation_m.pdf', bbox_inches='tight')
         plt.close(fig)
         os.startfile('Plots\\correlation_m.pdf')
         return
 
     if plot_type == 'Cluster plot':
-        sns.clustermap(data_dropped_na.corr(), metric="correlation", method="single", cmap='vlag', linewidths=0.5)
-        plt.savefig('Plots/cluster_plot.pdf')
+        sns.clustermap(data_dropped_na.corr(), metric="correlation", method="single", cmap='vlag', linewidths=0.5,
+                       figsize=(20, 12))
+        plt.savefig('Plots/cluster_plot.pdf', bbox_inches='tight')
         plt.close(fig)
         os.startfile('Plots\\cluster_plot.pdf')
         return
@@ -522,6 +531,12 @@ def add_tilda():
     formula_analysis.insert(0, var_formula.get())
 
 
+def add_dot():
+    formula_analysis.delete(0, END)
+    var_formula.set('.~')
+    formula_analysis.insert(0, var_formula.get())
+
+
 def delete_formula():
     var_formula.set('')
     formula_analysis.delete(0, END)
@@ -574,9 +589,10 @@ listbox.configure(yscrollcommand=y_scroll.set)
 
 listbox.bind('<<ListboxSelect>>', on_select)
 
-ttk.Button(root, text='+', command=add_plus, width=3).grid(row=10, column=0, padx=18, pady=5, columnspan=1, sticky='W')
-ttk.Button(root, text='~', command=add_tilda, width=3).grid(row=10, column=0, padx=14, pady=5, columnspan=1)
-ttk.Button(root, text='D', command=delete_formula, width=3).grid(row=10, column=0, padx=18, pady=5, columnspan=1, sticky='E')
+ttk.Button(root, text='+', command=add_plus, width=2).grid(row=10, column=0, padx=14, pady=5, columnspan=1, sticky='W')
+ttk.Button(root, text='.', command=add_dot, width=2).place(x=38, y=274)
+ttk.Button(root, text='~', command=add_tilda, width=2).place(x=62, y=274)
+ttk.Button(root, text='D', command=delete_formula, width=2).place(x=86, y=274)
 
 
 analysis_label = ttk.Label(root, text="Choose analysis:")
@@ -604,4 +620,3 @@ message.config(font=('default', 7))
 if __name__ == '__main__':
     root.mainloop()
 
-def v
