@@ -246,29 +246,35 @@ def our_levene(lists):
 # analysis of variance
 def anova_analysis():
     data_dropped_na = data.dropna()
-
-    mc1 = multi.MultiComparison(data_dropped_na[var_formula.get().split('~')[0]],
-                                data_dropped_na[var_formula.get().split('~')[1]])
-    result = mc1.tukeyhsd()
-    t = result.summary().as_text()
-    a_list = t.split('\n')
-    cols = [col for col in a_list[2].split(' ') if col]
-    df = pd.DataFrame(columns=cols)
-    for i in range(4, len(a_list) - 1):
-        items = [item for item in a_list[i].split(' ') if item]
-        df.loc[i - 4] = items
-
-    formula = var_formula.get()
-    mod = ols(formula, data=data_dropped_na).fit()
-
-    # print(mod.summary())
-    aov_table = sm.stats.anova_lm(mod, typ=2)
+    col = 1
     writer = pd.ExcelWriter('Analysis/ANOVA.xlsx')
-    caption = pd.DataFrame(columns=[var_formula.get().split('~')[0]])
-    caption.to_excel(writer, sheet_name='Sheet1')
-    aov_table.to_excel(writer, sheet_name='Sheet1', startcol=1)
-    df.to_excel(writer, sheet_name='Sheet1', startcol=7)
-    writer.save()
+
+    dependent_vars = var_formula.get().split('~')[0].split('+')
+
+    for dependent in dependent_vars:
+
+        mc1 = multi.MultiComparison(data_dropped_na[dependent], data_dropped_na[var_formula.get().split('~')[1]])
+        result = mc1.tukeyhsd()
+        t = result.summary().as_text()
+        a_list = t.split('\n')
+        cols = [col for col in a_list[2].split(' ') if col]
+        df = pd.DataFrame(columns=cols)
+        for i in range(4, len(a_list) - 1):
+            items = [item for item in a_list[i].split(' ') if item]
+            df.loc[i - 4] = items
+
+        formula = dependent + '~' + var_formula.get().split('~')[1]
+        mod = ols(formula, data=data_dropped_na).fit()
+
+        aov_table = sm.stats.anova_lm(mod, typ=2)
+
+        caption = pd.DataFrame(columns=[dependent])
+        caption.to_excel(writer, sheet_name='Sheet1', startrow=2, startcol=col)
+        aov_table.to_excel(writer, sheet_name='Sheet1', startcol=col, startrow=3)
+        df.to_excel(writer, sheet_name='Sheet1', startrow=3, startcol=col + 7)
+        col += 16
+        writer.save()
+
     os.startfile('Analysis\ANOVA.xlsx')
 
 
@@ -516,6 +522,11 @@ def add_tilda():
     formula_analysis.insert(0, var_formula.get())
 
 
+def delete_formula():
+    var_formula.set('')
+    formula_analysis.delete(0, END)
+
+
 # main GUI setup
 fig, ax = plt.subplots(1, 1)
 data = None
@@ -563,8 +574,10 @@ listbox.configure(yscrollcommand=y_scroll.set)
 
 listbox.bind('<<ListboxSelect>>', on_select)
 
-ttk.Button(root, text='+', command=add_plus, width=6).grid(row=10, column=0, padx=8, pady=5, columnspan=1, sticky='W')
-ttk.Button(root, text='~', command=add_tilda, width=6).grid(row=10, column=0, padx=22, pady=5, columnspan=1, sticky='E')
+ttk.Button(root, text='+', command=add_plus, width=3).grid(row=10, column=0, padx=18, pady=5, columnspan=1, sticky='W')
+ttk.Button(root, text='~', command=add_tilda, width=3).grid(row=10, column=0, padx=14, pady=5, columnspan=1)
+ttk.Button(root, text='D', command=delete_formula, width=3).grid(row=10, column=0, padx=18, pady=5, columnspan=1, sticky='E')
+
 
 analysis_label = ttk.Label(root, text="Choose analysis:")
 analysis_label.grid(row=7, column=1, sticky='WS', padx=5)
@@ -590,3 +603,5 @@ message.config(font=('default', 7))
 # run module
 if __name__ == '__main__':
     root.mainloop()
+
+def v

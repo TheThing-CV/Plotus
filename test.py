@@ -1,13 +1,19 @@
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-from scipy import stats
+import seaborn as sns, matplotlib.pyplot as plt
 
-data1 = pd.read_excel('data.xlsx')
-data1 = data1.dropna()
-data1 = sns.load_dataset("brain_networks", header=[0, 1, 2], index_col=0)
-data1 = data1.dropna()
+tips = sns.load_dataset("tips")
+print(tips)
 
-# fig, ax = plt.subplots(figsize=(10, 6))
-sns.clustermap(data1.corr(), metric="correlation", method="single", cmap="vlag", linewidths=0.5)
-plt.show()
+# sns.boxplot(x="day", y="total_bill", data=tips, palette="PRGn")
+#
+# # statistical annotation
+# x1, x2 = 0, 1   # columns 'Sat' and 'Sun' (first column: 0, see plt.xticks())
+# y, h, col = tips['total_bill'].max() + 10, 2, 'k'
+# plt.plot([x1, x1, x2, x2], [y, y+h, y+h, y], lw=1.5, c=col)
+# plt.text((x1+x2)*.5, y+h, "p < 0.01", ha='center', va='bottom', color=col)
+#
+# x1, x2 = 0, 3   # columns 'Sat' and 'Sun' (first column: 0, see plt.xticks())
+# y, h, col = tips['total_bill'].max() + 2, 2, 'k'
+# plt.plot([x1, x1, x2, x2], [y, y+h, y+h, y], lw=1.5, c=col)
+# plt.text((x1+x2)*.5, y+h, "p < 0.05", ha='center', va='bottom', color=col)
+#
+# plt.show()
