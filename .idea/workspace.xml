@@ -2,25 +2,27 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a817f8b4-9403-4539-b55e-0d807688b76c" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/User.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/User.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Analysis/ANOVA.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/Analysis/ANOVA.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Analysis/Normality.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/Analysis/Normality.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Analysis/descriptive statistics.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/Analysis/descriptive statistics.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Analysis/ANOVA.xlsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Analysis/Correlation.xlsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Analysis/Linear_reg.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Analysis/Linear_reg.xlsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Analysis/Logistic_reg.xlsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Analysis/Normality.xlsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Analysis/descriptive statistics.xlsx" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/GUI.py" beforeDir="false" afterPath="$PROJECT_DIR$/GUI.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plots/Boxplot.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Plots/Boxplot.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plots/barplot.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Plots/barplot.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plots/beeswarm.pdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plots/cluster_plot.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Plots/cluster_plot.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plots/correlation_m.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Plots/correlation_m.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plots/Boxplot.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plots/barplot.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plots/barplot.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plots/cluster_plot.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plots/correlation_m.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plots/countbar.pdf" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/Plots/hist.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Plots/hist.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plots/missing bars.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Plots/missing bars.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plots/missing correlations.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Plots/missing correlations.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plots/missing matrix.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Plots/missing matrix.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plots/scatter.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Plots/scatter.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Plots/violin.pdf" beforeDir="false" afterPath="$PROJECT_DIR$/Plots/violin.pdf" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test2.py" beforeDir="false" afterPath="$PROJECT_DIR$/test2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plots/missing bars.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plots/missing correlations.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plots/missing matrix.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plots/pairplot.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plots/scatter.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Plots/violin.pdf" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -65,7 +67,7 @@
     <session id="1170111067">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="6" />
+          <entry key="project.closed" value="7" />
           <entry key="project.open.time.3" value="2" />
           <entry key="project.open.time.4" value="7" />
           <entry key="project.open.time.5" value="1" />
@@ -75,13 +77,13 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="1" />
-          <entry key="py" value="5056" />
+          <entry key="py" value="5324" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="PLAIN_TEXT" value="1" />
-          <entry key="Python" value="5056" />
+          <entry key="Python" value="5324" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
@@ -103,13 +105,13 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/GUI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3237">
-              <caret line="475" column="106" lean-forward="true" selection-start-line="475" selection-start-column="106" selection-end-line="475" selection-end-column="106" />
+            <state relative-caret-position="670">
+              <caret line="730" lean-forward="true" selection-start-line="730" selection-end-line="730" />
               <folding>
                 <element signature="e#22#43#0" expanded="true" />
-                <marker date="1539883056896" expanded="true" signature="10128:12521" ph="..." />
-                <marker date="1539883056896" expanded="true" signature="22126:22241" ph="..." />
-                <marker date="1539883056896" expanded="true" signature="22262:22325" ph="..." />
+                <marker date="1539892743901" expanded="true" signature="10212:12629" ph="..." />
+                <marker date="1539892743901" expanded="true" signature="22390:22505" ph="..." />
+                <marker date="1539892743901" expanded="true" signature="22526:22589" ph="..." />
               </folding>
             </state>
           </provider>
@@ -119,7 +121,7 @@
         <entry file="file://$PROJECT_DIR$/test2.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="257">
-              <caret line="15" column="88" lean-forward="true" selection-start-line="15" selection-end-line="15" selection-end-column="88" />
+              <caret line="15" column="88" selection-start-line="15" selection-end-line="15" selection-end-column="88" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
                 <marker date="1539881165776" expanded="true" signature="443:538" ph="..." />
@@ -351,7 +353,7 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.30368763" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.30368763" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39587852" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -402,7 +404,7 @@
     <entry file="file://$PROJECT_DIR$/test2.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="257">
-          <caret line="15" column="88" lean-forward="true" selection-start-line="15" selection-end-line="15" selection-end-column="88" />
+          <caret line="15" column="88" selection-start-line="15" selection-end-line="15" selection-end-column="88" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
             <marker date="1539881165776" expanded="true" signature="443:538" ph="..." />
@@ -412,13 +414,13 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/GUI.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3237">
-          <caret line="475" column="106" lean-forward="true" selection-start-line="475" selection-start-column="106" selection-end-line="475" selection-end-column="106" />
+        <state relative-caret-position="670">
+          <caret line="730" lean-forward="true" selection-start-line="730" selection-end-line="730" />
           <folding>
             <element signature="e#22#43#0" expanded="true" />
-            <marker date="1539883056896" expanded="true" signature="10128:12521" ph="..." />
-            <marker date="1539883056896" expanded="true" signature="22126:22241" ph="..." />
-            <marker date="1539883056896" expanded="true" signature="22262:22325" ph="..." />
+            <marker date="1539892743901" expanded="true" signature="10212:12629" ph="..." />
+            <marker date="1539892743901" expanded="true" signature="22390:22505" ph="..." />
+            <marker date="1539892743901" expanded="true" signature="22526:22589" ph="..." />
           </folding>
         </state>
       </provider>

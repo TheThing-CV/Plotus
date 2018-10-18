@@ -18,15 +18,15 @@ sns.set_style('white')  # white, whitegrid, dark, darkgrid
 sns.set_context('notebook')
 
 # creating directories if needed
-if os.path.exists('Plots'):
+if os.path.exists('../../Plots'):
     pass
 else:
-    os.makedirs('Plots/')
+    os.makedirs('../../Plots/')
 
-if os.path.exists('Analysis'):
+if os.path.exists('../../Analysis'):
     pass
 else:
-    os.makedirs('Analysis/')
+    os.makedirs('../../Analysis/')
 
 
 # main function for data analysis
@@ -67,7 +67,7 @@ def describe():
     continuous_columns = [col for col in data.columns if data[col].dtype != 'object']
 
     formula = var_formula.get()
-    writer = pd.ExcelWriter('Analysis/descriptive statistics.xlsx')
+    writer = pd.ExcelWriter('../../Analysis/descriptive statistics.xlsx')
     col_number = 1
     row_number = 1
 
@@ -110,7 +110,7 @@ def describe():
                 col_number += 4
 
     writer.save()
-    os.startfile('Analysis\descriptive statistics.xlsx')
+    os.startfile('../../Analysis\descriptive statistics.xlsx')
 
 
 # checking for normality
@@ -154,12 +154,12 @@ def normality():
                 index_list.append(x + '[' + i + ']')
 
     df = pd.DataFrame({column_name: test_list, "p Value": p_value_list}, index=index_list)
-    writer = pd.ExcelWriter('Analysis/Normality.xlsx')
+    writer = pd.ExcelWriter('../../Analysis/Normality.xlsx')
     df.to_excel(writer, sheet_name='Sheet1', startcol=1)
     # df.to_excel(writer, sheet_name='Sheet1', startcol=7)
     writer.save()
     print_status('Status: Normality test performed', 'black')
-    os.startfile('Analysis\\Normality.xlsx')
+    os.startfile('../../Analysis\\Normality.xlsx')
 
 
 # checking for homogeneity
@@ -204,12 +204,12 @@ def homogeneity():
         index_list.append(x)
 
     df = pd.DataFrame({"Levene's W": test_list, "p Value": p_value_list}, index=index_list)
-    writer = pd.ExcelWriter('Analysis/Homogeneity.xlsx')
+    writer = pd.ExcelWriter('../../Analysis/Homogeneity.xlsx')
     df.to_excel(writer, sheet_name='Sheet1', startcol=1)
     # df.to_excel(writer, sheet_name='Sheet1', startcol=7)
     writer.save()
     print_status('Status: Levene\'s test performed', 'black')
-    os.startfile('Analysis\Homogeneity.xlsx')
+    os.startfile('../../Analysis\Homogeneity.xlsx')
 
 
 # custom Levine test
@@ -261,7 +261,7 @@ def anova_analysis():
     continuous_columns = [col for col in data_dropped_na.columns if data_dropped_na[col].dtype != 'object']
 
     col = 1
-    writer = pd.ExcelWriter('Analysis/ANOVA.xlsx')
+    writer = pd.ExcelWriter('../../Analysis/ANOVA.xlsx')
 
     if '.' in var_formula.get():
         dependent_vars = continuous_columns
@@ -292,7 +292,7 @@ def anova_analysis():
         col += 16
     writer.save()
 
-    os.startfile('Analysis\ANOVA.xlsx')
+    os.startfile('../../Analysis\ANOVA.xlsx')
     print_status('Status: Successful analysis', 'black')
 
 
@@ -301,7 +301,7 @@ def correlation_analysis():
     data_dropped_na = data.dropna()
     continuous_columns = [col for col in data_dropped_na.columns if data_dropped_na[col].dtype != 'object']
 
-    writer = pd.ExcelWriter('Analysis/Correlation.xlsx')
+    writer = pd.ExcelWriter('../../Analysis/Correlation.xlsx')
 
     r_results = data_dropped_na.corr()
     r_results.to_excel(writer, sheet_name="Pearson's r", startrow=2, startcol=2)
@@ -309,7 +309,7 @@ def correlation_analysis():
     p_results.to_excel(writer, sheet_name="P Values", startrow=2, startcol=2)
     writer.save()
 
-    os.startfile('Analysis\Correlation.xlsx')
+    os.startfile('../../Analysis\Correlation.xlsx')
     print_status('Status: Successful analysis', 'black')
 
 
@@ -322,7 +322,7 @@ def linear_reg():
     continuous_columns = [col for col in data_dropped_na.columns if data_dropped_na[col].dtype != 'object']
 
     col = 1
-    writer = pd.ExcelWriter('Analysis/Linear_reg.xlsx')
+    writer = pd.ExcelWriter('../../Analysis/Linear_reg.xlsx')
 
     dependent_var = var_formula.get().split('~')[0]
     regressor = var_formula.get().split('~')[1]
@@ -342,7 +342,7 @@ def linear_reg():
 
     writer.save()
 
-    os.startfile('Analysis\Linear_reg.xlsx')
+    os.startfile('../../Analysis\Linear_reg.xlsx')
     print_status('Status: Successful analysis', 'black')
 
 
@@ -355,7 +355,7 @@ def logistic_reg():
     continuous_columns = [col for col in data_dropped_na.columns if data_dropped_na[col].dtype != 'object']
 
     col = 1
-    writer = pd.ExcelWriter('Analysis/Logistic_reg.xlsx')
+    writer = pd.ExcelWriter('../../Analysis/Logistic_reg.xlsx')
 
     dependent_var = var_formula.get().split('~')[0]
     regressor = var_formula.get().split('~')[1]
@@ -378,7 +378,7 @@ def logistic_reg():
 
     writer.save()
 
-    os.startfile('Analysis\Logistic_reg.xlsx')
+    os.startfile('../../Analysis\Logistic_reg.xlsx')
     print_status('Status: Successful analysis', 'black')
 
 
@@ -459,17 +459,17 @@ def plot_us():
         if by is not None:
             plt.legend(loc='upper right')
 
-        fig.savefig('Plots/hist.pdf')
+        fig.savefig('../../Plots/hist.pdf')
         plt.close(fig)
-        os.startfile('Plots\hist.pdf')
+        os.startfile('../../Plots\hist.pdf')
         return
 
     if plot_type == 'Pair plot':
         sns_plot = sns.pairplot(data_dropped_na, hue=by, palette=combo_palette.get())
 
-        sns_plot.savefig('Plots/pairplot.pdf')
+        sns_plot.savefig('../../Plots/pairplot.pdf')
         plt.close(fig)
-        os.startfile('Plots\pairplot.pdf')
+        os.startfile('../../Plots\pairplot.pdf')
         return
 
     if plot_type == 'Scatter plot':
@@ -482,9 +482,9 @@ def plot_us():
         a.ax_joint.set_xlabel(combo_x.get(), fontsize=15, alpha=0.7)
         a.ax_joint.set_ylabel(combo_y.get(), fontsize=15, alpha=0.7)
         a.annotate(stats.pearsonr)
-        plt.savefig('Plots/scatter.pdf')
+        plt.savefig('../../Plots/scatter.pdf')
         plt.close()
-        os.startfile('Plots\scatter.pdf')
+        os.startfile('../../Plots\scatter.pdf')
 
         return
 
@@ -497,9 +497,9 @@ def plot_us():
         if by is not None:
             plt.legend(loc=[0.8, 0.9])
         sns.despine()
-        fig.savefig('Plots/barplot.pdf')
+        fig.savefig('../../Plots/barplot.pdf')
         plt.close(fig)
-        os.startfile('Plots\\barplot.pdf')
+        os.startfile('../../Plots\\barplot.pdf')
         return
 
     if plot_type == 'Count bar':
@@ -509,9 +509,9 @@ def plot_us():
         if by is not None:
             plt.legend(loc=[0.8, 0.9])
         sns.despine()
-        fig.savefig('Plots/countbar.pdf')
+        fig.savefig('../../Plots/countbar.pdf')
         plt.close(fig)
-        os.startfile('Plots\\countbar.pdf')
+        os.startfile('../../Plots\\countbar.pdf')
         return
 
     if plot_type == 'Box plot':
@@ -523,9 +523,9 @@ def plot_us():
         if by is not None:
             plt.legend(loc='upper right')
         sns.despine()
-        plt.savefig('Plots/Boxplot.pdf')
+        plt.savefig('../../Plots/Boxplot.pdf')
         plt.close(fig)
-        os.startfile('Plots\Boxplot.pdf')
+        os.startfile('../../Plots\Boxplot.pdf')
         return
 
     if plot_type == 'Violin plot':
@@ -537,9 +537,9 @@ def plot_us():
         if by is not None:
             plt.legend(loc='upper right')
         sns.despine()
-        plt.savefig('Plots/violin.pdf')
+        plt.savefig('../../Plots/violin.pdf')
         plt.close(fig)
-        os.startfile('Plots\\violin.pdf')
+        os.startfile('../../Plots\\violin.pdf')
         return
 
     if plot_type == 'Beeswarm plot':
@@ -558,9 +558,9 @@ def plot_us():
         ax.set_ylabel(combo_y.get(), color='#666666')
         ax.set_xlabel(combo_x.get(), color='#666666')
         sns.despine()
-        plt.savefig('Plots/beeswarm.pdf')
+        plt.savefig('../../Plots/beeswarm.pdf')
         plt.close(fig)
-        os.startfile('Plots\\beeswarm.pdf')
+        os.startfile('../../Plots\\beeswarm.pdf')
         return
 
     if plot_type == 'Correlation matrix':
@@ -568,17 +568,17 @@ def plot_us():
         colormap = sns.diverging_palette(220, 10, as_cmap=True)
 
         sns.heatmap(corr, cmap=colormap, annot=True, fmt=".2f", linewidths=0.5)
-        plt.savefig('Plots/correlation_m.pdf', bbox_inches='tight')
+        plt.savefig('../../Plots/correlation_m.pdf', bbox_inches='tight')
         plt.close(fig)
-        os.startfile('Plots\\correlation_m.pdf')
+        os.startfile('../../Plots\\correlation_m.pdf')
         return
 
     if plot_type == 'Cluster plot':
         sns.clustermap(data_dropped_na.corr(), metric="correlation", method="single", cmap='vlag', linewidths=0.5,
                        figsize=(20, 12))
-        plt.savefig('Plots/cluster_plot.pdf', bbox_inches='tight')
+        plt.savefig('../../Plots/cluster_plot.pdf', bbox_inches='tight')
         plt.close(fig)
-        os.startfile('Plots\\cluster_plot.pdf')
+        os.startfile('../../Plots\\cluster_plot.pdf')
         return
 
     if plot_type == 'Missing data with matrix':
@@ -590,9 +590,9 @@ def plot_us():
 
         ax = missingno.matrix(data if len(data) < 500 else data.sample(500), inline=False, figsize=figsize)
 
-        plt.savefig('Plots/missing matrix.pdf')
+        plt.savefig('../../Plots/missing matrix.pdf')
         plt.close(fig)
-        os.startfile('Plots\\missing matrix.pdf')
+        os.startfile('../../Plots\\missing matrix.pdf')
         return
 
     if plot_type == 'Missing data with bars':
@@ -604,17 +604,17 @@ def plot_us():
 
         ax = missingno.bar(data if len(data) < 500 else data.sample(500), inline=False, figsize=figsize)
 
-        plt.savefig('Plots/missing bars.pdf')
+        plt.savefig('../../Plots/missing bars.pdf')
         plt.close(fig)
-        os.startfile('Plots\\missing bars.pdf')
+        os.startfile('../../Plots\\missing bars.pdf')
         return
 
     if plot_type == 'Missing data correlations':
         ax = missingno.heatmap(data, inline=False, figsize=(25, 25))
 
-        plt.savefig('Plots/missing correlations.pdf')
+        plt.savefig('../../Plots/missing correlations.pdf')
         plt.close(fig)
-        os.startfile('Plots\\missing correlations.pdf')
+        os.startfile('../../Plots\\missing correlations.pdf')
         return
 
 
