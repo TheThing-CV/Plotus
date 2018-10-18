@@ -8,11 +8,11 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import statsmodels.stats.multicomp as multi
 from scipy.stats.mstats import normaltest
-from scipy.stats import f, stats
+from scipy.stats import f, stats, pearsonr
 from numpy import mean
 import missingno
 import statsmodels.api as sm
-from statsmodels.formula.api import ols
+from statsmodels.formula.api import ols, logit
 
 sns.set_style('white')  # white, whitegrid, dark, darkgrid
 sns.set_context('notebook')
@@ -40,10 +40,18 @@ def analyze_us():
         describe()
     elif method == 'Normality test':
         normality()
-    elif method == 'Levene\'s equality of variance':
+    elif method == 'Levene\'s test':
         homogeneity()
     elif method == 'ANOVA one-way':
         anova_analysis()
+    elif method == 'Correlation':
+        correlation_analysis()
+    elif method == 'Linear regression':
+        linear_reg()
+    elif method == 'Logistic regression':
+        logistic_reg()
+    else:
+        print_status('Warning: Choose analysis', 'red')
 
 
 # print status of the program
@@ -255,7 +263,10 @@ def anova_analysis():
     col = 1
     writer = pd.ExcelWriter('Analysis/ANOVA.xlsx')
 
-    dependent_vars = var_formula.get().split('~')[0].split('+')
+    if '.' in var_formula.get():
+        dependent_vars = continuous_columns
+    else:
+        dependent_vars = var_formula.get().split('~')[0].split('+')
 
     for dependent in dependent_vars:
 
@@ -279,10 +290,106 @@ def anova_analysis():
         aov_table.to_excel(writer, sheet_name='Sheet1', startcol=col, startrow=3)
         df.to_excel(writer, sheet_name='Sheet1', startrow=3, startcol=col + 7)
         col += 16
-        writer.save()
+    writer.save()
 
     os.startfile('Analysis\ANOVA.xlsx')
     print_status('Status: Successful analysis', 'black')
+
+
+def correlation_analysis():
+
+    data_dropped_na = data.dropna()
+    continuous_columns = [col for col in data_dropped_na.columns if data_dropped_na[col].dtype != 'object']
+
+    writer = pd.ExcelWriter('Analysis/Correlation.xlsx')
+
+    r_results = data_dropped_na.corr()
+    r_results.to_excel(writer, sheet_name="Pearson's r", startrow=2, startcol=2)
+    p_results = calculate_pvalues(data_dropped_na)
+    p_results.to_excel(writer, sheet_name="P Values", startrow=2, startcol=2)
+    writer.save()
+
+    os.startfile('Analysis\Correlation.xlsx')
+    print_status('Status: Successful analysis', 'black')
+
+
+def linear_reg():
+    if var_formula.get() == '':
+        print_status("Warning: Formula is missing", 'red')
+        return
+
+    data_dropped_na = data.dropna()
+    continuous_columns = [col for col in data_dropped_na.columns if data_dropped_na[col].dtype != 'object']
+
+    col = 1
+    writer = pd.ExcelWriter('Analysis/Linear_reg.xlsx')
+
+    dependent_var = var_formula.get().split('~')[0]
+    regressor = var_formula.get().split('~')[1]
+
+    formula = dependent_var + '~' + regressor
+    mod = ols(formula, data=data_dropped_na).fit()
+
+    caption = pd.DataFrame(columns=['Linear Regression'])
+    caption.to_excel(writer, sheet_name='Sheet1', startrow=2, startcol=col)
+
+    df = pd.concat((mod.params, mod.tvalues, mod.pvalues), axis=1)
+
+    # print(mod.conf_int(alpha=0.05, cols=None))
+    df.rename(columns={0: 'beta', 1: 't', 2: 'p_value'}).to_excel(writer, sheet_name='Sheet1', startrow=4,
+                                                                  startcol=col)
+    col += 6
+
+    writer.save()
+
+    os.startfile('Analysis\Linear_reg.xlsx')
+    print_status('Status: Successful analysis', 'black')
+
+
+def logistic_reg():
+    if var_formula.get() == '':
+        print_status("Warning: Formula is missing", 'red')
+        return
+
+    data_dropped_na = data.dropna()
+    continuous_columns = [col for col in data_dropped_na.columns if data_dropped_na[col].dtype != 'object']
+
+    col = 1
+    writer = pd.ExcelWriter('Analysis/Logistic_reg.xlsx')
+
+    dependent_var = var_formula.get().split('~')[0]
+    regressor = var_formula.get().split('~')[1]
+
+    data_dropped_na['Category_log'] = data_dropped_na[dependent_var].map({data[dependent_var].unique()[0]: 1,
+                                                                      data[dependent_var].unique()[1]: 0})
+
+    formula = 'Category_log' + '~' + regressor
+    mod = logit(formula, data=data_dropped_na).fit()
+
+    caption = pd.DataFrame(columns=['Logistic Regression'])
+    caption.to_excel(writer, sheet_name='Sheet1', startrow=2, startcol=col)
+
+    df = pd.concat((mod.params, mod.bse, mod.pvalues), axis=1)
+
+    # print(mod.conf_int(alpha=0.05, cols=None))
+    df.rename(columns={0: 'coeff', 1: 'std error', 2: 'p_value'}).to_excel(writer, sheet_name='Sheet1', startrow=4,
+              startcol=col)
+    col += 6
+
+    writer.save()
+
+    os.startfile('Analysis\Logistic_reg.xlsx')
+    print_status('Status: Successful analysis', 'black')
+
+
+def calculate_pvalues(df):
+    df = df._get_numeric_data()
+    dfcols = pd.DataFrame(columns=df.columns)
+    pvalues = dfcols.transpose().join(dfcols, how='outer')
+    for r in df.columns:
+        for c in df.columns:
+            pvalues[r][c] = pearsonr(df[r], df[c])[1]
+    return pvalues
 
 
 # load data from disk
@@ -315,7 +422,7 @@ def load():
         type_combo.config(values=types_list)
         type_combo.set(types_list[0])
         analysis_types = ['None', 'Descriptive stats', 'Normality test', 'Levene\'s equality of variance',
-                          'ANOVA one-way']
+                          'ANOVA one-way', 'Correlation', 'Linear regression', 'Logistic regression']
         combo_analysis.config(values=analysis_types)
         combo_analysis.set(analysis_types[0])
         palettes = ['Blues', 'coolwarm', 'GnBu_d', 'pastel', 'Set1',
@@ -323,6 +430,7 @@ def load():
         combo_palette.config(values=palettes)
         combo_palette.set(palettes[0])
 
+        listbox.delete(0, END)
         for item in data.columns:
             # insert each new item to the end of the listbox
             listbox.insert('end', item)
@@ -331,7 +439,7 @@ def load():
 
 # core plotting procedures
 def plot_us():
-    fig, ax = plt.subplots(1, 1, figsize=(22, 12))
+    fig, ax = plt.subplots(1, 1, figsize=(20, 14))
     by = combo_by.get()
     if by == 'None':
         by = None
@@ -617,6 +725,6 @@ message.grid(row=12, column=0, columnspan=2, pady=2)
 message.config(font=('default', 7))
 
 # run module
+
 if __name__ == '__main__':
     root.mainloop()
-
